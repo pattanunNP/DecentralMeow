@@ -38,9 +38,12 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Itim&display=swap"
             rel="stylesheet"
           ></link>
+          
+          
         </Head>
         <body>
           <Main />
+          
           <NextScript />
         </body>
       </Html>

@@ -9,6 +9,7 @@ contract Banking {
     uint256 private bankBalance = 0;
 
     struct Account {
+        string name;
         uint256 serial;
         uint256 createAt;
         address creator;
@@ -66,6 +67,7 @@ contract Banking {
         serialNumber++;
         //// Create a new account and store it in the accounts mapping.
         nameAccountRecord[_name] = Account(
+            _name,
             serialNumber,
             block.timestamp,
             _creator,

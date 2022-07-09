@@ -22,6 +22,24 @@
       "@styles/*": [
         "styles/*"
       ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@context/*": [
+        "context/*"
+      ],
+      "@redux/*": [
+        "redux/*"
+      ],
+      "@types/*": [
+        "types/*"
+      ],
+      "@interfaces/*": [
+        "interfaces/*"
+      ],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
