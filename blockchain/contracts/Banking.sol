@@ -10,7 +10,6 @@ contract Banking {
     uint256 private bankBalance = 0;
 
     struct Account {
-        string name;
         uint256 serial;
         uint256 createAt;
         address creator;
@@ -32,7 +31,7 @@ contract Banking {
     mapping(string => Account) private nameAccountRecord;
     mapping(address => string[]) private accountNameRecord;
 
-    constructor(address owner_address, address bank_address) {
+    constructor(address bank_address, address owner_address) {
         owner = owner_address;
         bank = bank_address;
     }
@@ -69,7 +68,6 @@ contract Banking {
         serialNumber++;
         //// Create a new account and store it in the accounts mapping.
         nameAccountRecord[_name] = Account(
-            _name,
             serialNumber,
             block.timestamp,
             _creator,
@@ -164,7 +162,7 @@ contract Banking {
         string memory to_name,
         uint256 amount
     ) public {
-        // Function for withdraw fund to owner wallet
+        // Function for transfer fund to other account
 
         uint256 deduct = (amount * 1) / 100;
 
@@ -187,7 +185,6 @@ contract Banking {
             // send to another account deduct 1%
             nameAccountRecord[from_name]._balance -= amount;
             nameAccountRecord[to_name]._balance += (amount - deduct);
-            payable(bank).transfer(deduct);
         }
 
         serialNumber++;
@@ -199,6 +196,50 @@ contract Banking {
             transacNum,
             serialNumber,
             "transfer success"
+        );
+    }
+
+    function batchTransfer(
+        string memory from_name,
+        string[] memory to_names,
+        uint256 amount
+    ) public {
+        // Function for batch transfer fund to other account
+
+        uint256 deduct = (amount * 1) / 100;
+
+        require(
+            amount > 0 &&
+                amount * to_names.length <=
+                nameAccountRecord[from_name]._balance,
+            "insufficient funds to transfer"
+        );
+        require(
+            nameAccountRecord[from_name].creator == msg.sender,
+            "Don't have permission"
+        );
+
+        for (uint256 i = 0; i < to_names.length; i++) {
+            string memory to_name = to_names[i];
+            if (
+                nameAccountRecord[from_name].creator ==
+                nameAccountRecord[to_name].creator
+            ) {
+                nameAccountRecord[from_name]._balance -= amount;
+                nameAccountRecord[to_name]._balance += amount;
+            } else {
+                // send to another account deduct 1%
+                nameAccountRecord[from_name]._balance -= amount;
+                nameAccountRecord[to_name]._balance += (amount - deduct);
+            }
+        }
+
+        emit TransactionCompleted(
+            msg.sender,
+            amount,
+            transacNum,
+            serialNumber,
+            "batch transfer success"
         );
     }
 
