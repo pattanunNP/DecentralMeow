@@ -250,9 +250,11 @@ export const contract_abi = [
 
 export const getContract = async () => {
   const deployedNetwork = BankingContract.networks["5777"];
-  const web3 = new Web3(window.ethereum);
+
+  const { ethereum } = window as any;
+  const web3 = new Web3(ethereum);
   var contract = new web3.eth.Contract(
-    contract_abi,
+    contract_abi as any,
     deployedNetwork && deployedNetwork.address
   );
   return contract;

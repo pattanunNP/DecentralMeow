@@ -40,6 +40,12 @@
       "@interfaces/*": [
         "interfaces/*"
       ],
+      "@reducers/*": [
+        "reducers/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

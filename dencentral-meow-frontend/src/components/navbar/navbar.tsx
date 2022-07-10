@@ -3,20 +3,21 @@ import Link from "next/link";
 import { FC, useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 const Navigation: FC = () => {
-  const [web3Library, setWeb3Library] = useState();
   const [web3Account, setWeb3Account] = useState();
 
   async function connect() {
-    console.log("connecting");
+    //console.log("connecting");
     try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const account = accounts[0];
-      console.log(account);
-      setWeb3Account(account);
+      if ((window as any).ethereum) {
+        const { ethereum } = window as any;
+        const accounts = await ethereum.request({
+          method: "eth_requestAccounts",
+        });
 
-      console.log("library");
+        const account = accounts[0];
+
+        setWeb3Account(account);
+      }
 
       // toast.success("Successfully connected to Metamask");
     } catch (ex) {
@@ -26,7 +27,12 @@ const Navigation: FC = () => {
   }
   useEffect(() => {
     connect();
-  }, []);
+  }, [web3Account]);
+  useEffect(() => {
+    (window as any).ethereum.on("accountsChanged", async () => {
+      connect();
+    });
+  }, [web3Account]);
 
   return (
     <>

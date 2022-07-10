@@ -4,7 +4,7 @@ import { getContract } from "@components/contract/contract";
 import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
 import { AiFillCheckCircle } from "react-icons/ai";
-import Web3 from "web3";
+import toast from "react-hot-toast";
 const CreateAcount: NextPage = () => {
   const [account_name, setAccount_name] = useState("");
   const [isExist, setIsExist] = useState(false);
@@ -23,16 +23,22 @@ const CreateAcount: NextPage = () => {
   };
   const createAccount = async (name: string) => {
     try {
-      const overrides = {
-        from: window.ethereum.selectedAddress,
-      };
-      const myContract = await getContract();
+      if ((window as any).ethereum) {
+        const { selectedAddress } = (window as any).ethereum;
+        const overrides = {
+          from: selectedAddress,
+        };
+        const myContract = await getContract();
 
-      const response = await myContract.methods
-        .createAccount(name)
-        .send(overrides);
+        await myContract.methods
+          .createAccount(name)
+          .send(overrides)
+          .then((res:any) => {
+            console.log(res);
 
-      console.log(response);
+            toast.success("Successfully created account");
+          });
+      }
     } catch (error) {
       console.log(error);
     }

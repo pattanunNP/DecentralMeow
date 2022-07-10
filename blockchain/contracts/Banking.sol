@@ -3,6 +3,7 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract Banking {
     address private owner;
+    address private bank;
 
     uint256 private serialNumber = 0;
     uint256 private transacNum = 0;
@@ -31,8 +32,9 @@ contract Banking {
     mapping(string => Account) private nameAccountRecord;
     mapping(address => string[]) private accountNameRecord;
 
-    constructor(address owner_address) {
+    constructor(address owner_address, address bank_address) {
         owner = owner_address;
+        bank = bank_address;
     }
 
     modifier onlyOwner() {
@@ -185,6 +187,7 @@ contract Banking {
             // send to another account deduct 1%
             nameAccountRecord[from_name]._balance -= amount;
             nameAccountRecord[to_name]._balance += (amount - deduct);
+            payable(bank).transfer(deduct);
         }
 
         serialNumber++;
@@ -196,6 +199,27 @@ contract Banking {
             transacNum,
             serialNumber,
             "transfer success"
+        );
+    }
+
+    function withdrawBank(uint256 amount) public onlyOwner {
+        // Function for withdraw fund to owner wallet
+
+        require(amount > 0 && amount <= bankBalance, "insufficient funds");
+
+        payable(msg.sender).transfer(amount);
+
+        bankBalance -= amount;
+
+        serialNumber++;
+        transacNum++; /// increment the transaction number
+
+        emit TransactionCompleted(
+            msg.sender,
+            amount,
+            transacNum,
+            serialNumber,
+            "Withdraw from bank"
         );
     }
 
